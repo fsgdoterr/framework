@@ -1,0 +1,10 @@
+{
+    "name": "csgo/csgo",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}
