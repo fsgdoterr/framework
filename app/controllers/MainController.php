@@ -3,9 +3,9 @@ namespace App\Controllers;
 
 class MainController
 {
-    public function show()
+    public function show($slug, $id)
     {
-        
+        echo 'Привет'. $slug . ' ' . $id;
     }
 }
 

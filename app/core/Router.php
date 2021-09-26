@@ -5,12 +5,12 @@ class Router
 {
     private static $routes = [];
     private $params = [];
+    private $args;
 
     public static function add(string $method, string $uri, array $controllerAndAction = [])
     {
         $method = mb_strtoupper($method);
-        //$uri = '#^' . trim($uri, '/') . '$#';
-        $uri = '/'. trim($uri, '/') . '/';
+        $uri = '#^' . trim($uri, '/') . '$#';
         self::$routes[$method][$uri] = [
             'controller' => $controllerAndAction[0],
             'action'     => $controllerAndAction[1],
@@ -29,15 +29,14 @@ class Router
         $method = $_SERVER['REQUEST_METHOD'];
         if($method == 'GET')
         {
-            var_dump(self::$routes);
-                echo '<br>';
             foreach(self::$routes['GET'] as $route => $params)
             {
-                
-                var_dump($route);
                 if(preg_match($route, $url, $matches))
                 {
+                    unset($matches[0]);
+                    $matches = array_values($matches);
                     $this->params = $params;
+                    $this->args = $matches;
                     return true;
                 }
             }
@@ -53,9 +52,26 @@ class Router
     {
         if($this->match())
         {
-            echo 'маршрут найден';
+            $controller = '\\App\\controllers\\'. $this->params['controller'];
+            if(class_exists($controller))
+            {
+                $action = $this->params['action'];
+                if(method_exists($controller, $action))
+                {
+                    call_user_func_array([$controller, $action] , $this->args);
+                }
+                else
+                {
+                    echo 'Метод не найден';
+                }
+            }
+            else
+            {
+                echo 'Контроллер не найден';
+            }
         }
-        else {
+        else 
+        {
             echo 'Маршрут не найден';
         }
         
